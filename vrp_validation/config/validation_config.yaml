@@ -1,0 +1,45 @@
+# Configuration for the VRP Validation Study
+
+# Dataset Generation
+dataset:
+  n_customers: 50
+  n_vehicles: 3
+  n_days: 5
+  grid_size_km: 15
+  demand_range_kg: [5, 50]
+  service_time_range_min: [5, 20]
+  time_window_range_hours: [2, 6]
+  availability_base_prob_range: [0.7, 0.95]
+  outlier_percentage: 0.05
+
+# ML Pipeline
+ml_pipeline:
+  test_split_days: 5 # Days for validation and test sets
+  random_forest:
+    travel_model:
+      n_estimators: 100
+      max_depth: 10
+      random_state: 42
+    availability_model:
+      n_estimators: 100
+      max_depth: 8
+      random_state: 42
+      class_weight: 'balanced'
+
+# Optimization Model
+optimization:
+  solver: 'PULP_CBC_CMD' # Options: PULP_CBC_CMD, GLPK_CMD, etc.
+  time_limit_seconds: 600
+  optimality_gap_target: 0.05
+  penalties:
+    unavailable_customer: 100 # Cost for visiting a customer predicted to be unavailable
+
+# Analysis Dashboard
+dashboard:
+  benchmarks:
+    travel_time_mae_pct: 0.25 # Max acceptable Mean Absolute Error as % of average
+    travel_time_r2_min: 0.6
+    availability_auc_min: 0.7
+  reports:
+    generate_full_report: true
+    output_dir: 'data/results'
